@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 // Apply the adapter to the spinner
                 sourceCurrencySpinner.adapter = spinnerAdapter
             }
+        sourceCurrencySpinner.onItemSelectedListener = this
 
         /// Callback from ViewModel
         vm.exchangeRateDataList.observe(this) {
@@ -57,11 +58,9 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
+//        val selectedSourceCurrency = parent?.getItemAtPosition(position) as String
 
-
-
+        vm.calculateExchangeRate()
         vm.getExchangeRates()
     }
 

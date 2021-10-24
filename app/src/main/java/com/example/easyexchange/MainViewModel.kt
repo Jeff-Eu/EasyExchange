@@ -63,4 +63,8 @@ class MainViewModel : ViewModel() {
         getExchangeRates()
     }
 
+    fun calculateExchangeRate() {
+//        _exchangeRateDataList.value.forEach {  }
+    }
+
 }
