@@ -18,15 +18,19 @@ package com.example.easyexchange
 }
 
  */
-data class LiveExchangeRateResponse(
-    var success: Boolean,
-    val timestamp: Long,
-    val source: String,
-    val quotes: Map<String, Double>
-)
 
-data class ExchangeRateData(
-    var exchangeRate: Double,
-    var targetCurrency: String,
-    var sourceCurrency: String = "USD"
-)
+// Remember to initialize variables' values,
+// otherwise Moshi would get crash if response json doesn't include the key-values.
+data class LiveExchangeRateResponse(
+    var success: Boolean = false,
+    var timestamp: Long = 0,
+    var source: String = "USD",
+    var quotes: Map<String, Double> = mutableMapOf(),
+    var error: Any? = null
+) {
+    companion object {
+
+
+    }
+
+}

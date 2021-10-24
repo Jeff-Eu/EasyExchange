@@ -8,6 +8,12 @@ import kotlin.reflect.KProperty
 
 open class SharedPreferencesHelper {
 
+    companion object {
+
+        const val defaultJsonOfCurrencyLayerResponse =
+            "{\"success\":true,\"timestamp\":1635235804,\"source\":\"USD\",\"quotes\":{\"USDAUD\":1.333801,\"USDUSD\":1.0,\"USDJPY\":113.997502,\"USDEUR\":0.861809,\"USDGBP\":0.726185,\"USDTWD\":27.824498}}"
+    }
+
     private val context = EasyExchangeApplication.instance
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -17,22 +23,13 @@ open class SharedPreferencesHelper {
         )
     }
 
-    // Last Json response from calling CurrencyLayer API
-    var lastJsonFromCurrencyLayer by SharedPreferenceDelegates.stringSetProperty()
-
-    // Source Currency
-    var sourceCurrency by SharedPreferenceDelegates.stringProperty("USD")
-
-    // Selected target  currencies by user's preference
-    var selectedTargetCurrencies by SharedPreferenceDelegates.stringSetProperty(
-        mutableSetOf(
-            "AUD",
-            "JPY",
-            "EUR",
-            "GBP",
-            "TWD"
-        )
+    // jsonOfCurrencyLayerResponse saves the the most recent Json response from CurrencyLayer API
+    var jsonOfCurrencyLayerResponse by SharedPreferenceDelegates.stringProperty(
+        defaultJsonOfCurrencyLayerResponse
     )
+
+    // Selected source Currency
+    var sourceCurrency by SharedPreferenceDelegates.stringProperty("USD")
 
     private object SharedPreferenceDelegates {
 
@@ -92,27 +89,6 @@ open class SharedPreferencesHelper {
                 ) {
                     thisRef.sharedPreferences.edit()
                         .putString(property.name, value)
-                        .apply()
-                }
-            }
-
-        fun stringSetProperty(defaultValue: MutableSet<String> = mutableSetOf()) =
-            object : ReadWriteProperty<SharedPreferencesHelper, MutableSet<String>> {
-                override fun getValue(
-                    thisRef: SharedPreferencesHelper,
-                    property: KProperty<*>
-                ): MutableSet<String> {
-                    return thisRef.sharedPreferences.getStringSet(property.name, defaultValue)
-                        ?: mutableSetOf()
-                }
-
-                override fun setValue(
-                    thisRef: SharedPreferencesHelper,
-                    property: KProperty<*>,
-                    value: MutableSet<String>
-                ) {
-                    thisRef.sharedPreferences.edit()
-                        .putStringSet(property.name, value)
                         .apply()
                 }
             }

@@ -21,4 +21,10 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.example.easyexchange", appContext.packageName)
     }
+
+    @Test
+    fun vvv() {
+
+
+    }
 }

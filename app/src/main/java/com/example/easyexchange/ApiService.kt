@@ -24,7 +24,7 @@ interface ApiService {
 
     // Request the most recent exchange rate data
     @GET("live")
-    suspend fun getLiveExchangeRate(
+    suspend fun getLiveExchangeRates(
         @Query("currencies") currencies: String,
         @Query("access_key") access_key: String = "7254d2810ad44d983b2ba441ffcb5147",
         @Query("format") format: Int = 1
