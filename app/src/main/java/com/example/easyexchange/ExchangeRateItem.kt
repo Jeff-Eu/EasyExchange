@@ -5,7 +5,7 @@ import com.example.easyexchange.databinding.ConvertedCurrencyItemBinding
 import com.xwray.groupie.viewbinding.BindableItem
 
 
-class ConvertedCurrencyItem(private val value: String) :
+class ExchangeRateItem(private val targetType: String, private val exchangeRate: Double) :
     BindableItem<ConvertedCurrencyItemBinding>() {
 
     override fun initializeViewBinding(view: View): ConvertedCurrencyItemBinding {
@@ -15,6 +15,7 @@ class ConvertedCurrencyItem(private val value: String) :
     override fun getLayout() = R.layout.converted_currency_item
 
     override fun bind(viewBinding: ConvertedCurrencyItemBinding, position: Int) {
-        viewBinding.currencyValue.text = value
+        viewBinding.currencyType.text = targetType
+        viewBinding.currencyValue.text = exchangeRate.toString()
     }
 }

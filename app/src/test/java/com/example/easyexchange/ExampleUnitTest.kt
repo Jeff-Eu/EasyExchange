@@ -14,4 +14,10 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+
+    @Test
+    fun testMutableSetToString() {
+        val set = mutableSetOf("12", "34")
+        println(set.joinToString())
+    }
 }

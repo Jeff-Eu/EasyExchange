@@ -1,11 +1,14 @@
 package com.example.easyexchange
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-open class SharedPreferencesHelper(context: Context) {
+open class SharedPreferencesHelper {
+
+    private val context = EasyExchangeApplication.instance
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(
@@ -17,8 +20,19 @@ open class SharedPreferencesHelper(context: Context) {
     // Last Json response from calling CurrencyLayer API
     var lastJsonFromCurrencyLayer by SharedPreferenceDelegates.stringSetProperty()
 
-    // Selected currencies by user's preference
-    var selectedCurrencies by SharedPreferenceDelegates.stringProperty()
+    // Source Currency
+    var sourceCurrency by SharedPreferenceDelegates.stringProperty("USD")
+
+    // Selected target  currencies by user's preference
+    var selectedTargetCurrencies by SharedPreferenceDelegates.stringSetProperty(
+        mutableSetOf(
+            "AUD",
+            "JPY",
+            "EUR",
+            "GBP",
+            "TWD"
+        )
+    )
 
     private object SharedPreferenceDelegates {
 
@@ -102,9 +116,5 @@ open class SharedPreferencesHelper(context: Context) {
                         .apply()
                 }
             }
-    }
-
-    fun clearAll(){
-        sharedPreferences.edit().clear().apply()
     }
 }

@@ -12,14 +12,16 @@ import com.xwray.groupie.GroupieViewHolder
 
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
+    // todo: How could I replace var with val ?
     private lateinit var binding: ActivityMainBinding
+    private lateinit var vm: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val vm = ViewModelProvider(this).get(MainViewModel::class.java)
+        vm = ViewModelProvider(this).get(MainViewModel::class.java)
 
         // SwipeRefreshLayout
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -30,44 +32,49 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val adapter = GroupAdapter<GroupieViewHolder>()
         binding.recyclerviewConverted.adapter = adapter
 
-        adapter.add(ConvertedCurrencyItem("100 yen"))
-        adapter.add(ConvertedCurrencyItem("1782 dollar"))
-        adapter.add(ConvertedCurrencyItem("3021 pond"))
-        adapter.add(ConvertedCurrencyItem("70 dollar"))
-        adapter.add(ConvertedCurrencyItem("1782 dollar"))
-        adapter.add(ConvertedCurrencyItem("3021 pond"))
-        adapter.add(ConvertedCurrencyItem("70 dollar"))
-        adapter.add(ConvertedCurrencyItem("1782 dollar"))
-        adapter.add(ConvertedCurrencyItem("3021 pond"))
-        adapter.add(ConvertedCurrencyItem("70 dollar"))
-        adapter.add(ConvertedCurrencyItem("3021 pond"))
-        adapter.add(ConvertedCurrencyItem("70 dollar"))
-        adapter.add(ConvertedCurrencyItem("1782 dollar"))
-        adapter.add(ConvertedCurrencyItem("3021 pond"))
-        adapter.add(ConvertedCurrencyItem("70 dollar"))
-//        vm.convertedCurrencyList.observe(this) {
-//            adapter.update(it.map { v -> ConvertedCurrencyItem(v.chtmessage) }.toMutableList())
-//        }
+        /* Test for UI only
+//        adapter.add(ExchangeRateItem("100 yen"))
+//        adapter.add(ExchangeRateItem("1782 dollar"))
+//        adapter.add(ExchangeRateItem("3021 pond"))
+//        adapter.add(ExchangeRateItem("70 dollar"))
+//        adapter.add(ExchangeRateItem("1782 dollar"))
+//        adapter.add(ExchangeRateItem("3021 pond"))
+//        adapter.add(ExchangeRateItem("70 dollar"))
+//        adapter.add(ExchangeRateItem("1782 dollar"))
+//        adapter.add(ExchangeRateItem("3021 pond"))
+//        adapter.add(ExchangeRateItem("70 dollar"))
+//        adapter.add(ExchangeRateItem("3021 pond"))
+//        adapter.add(ExchangeRateItem("70 dollar"))
+//        adapter.add(ExchangeRateItem("1782 dollar"))
+//        adapter.add(ExchangeRateItem("3021 pond"))
+//        adapter.add(ExchangeRateItem("70 dollar"))
+         */
+        vm.exchangeRateDataList.observe(this) {
+            adapter.update(it.map { v -> ExchangeRateItem(v.targetCurrency, v.exchangeRate) }
+                .toMutableList())
+        }
+
+        vm.exchangeRateRetrieved.observe(this) {
+            if (it)
+                binding.swipeRefreshLayout.isRefreshing = false
+        }
 
         // Spinner
         val spinner = binding.spinnerSelectedCurrency
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.target_currencies,
-            android.R.layout.simple_spinner_item
-        ).also { spinnerAdapter ->
-            // Specify the layout to use when the list of choices appears
-            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            spinner.adapter = spinnerAdapter
-        }
+        val targetCurrencies = SharedPreferencesHelper().selectedTargetCurrencies
+        ArrayAdapter(this, android.R.layout.simple_spinner_item, targetCurrencies.toList())
+            .also { spinnerAdapter ->
+                // Specify the layout to use when the list of choices appears
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                // Apply the adapter to the spinner
+                spinner.adapter = spinnerAdapter
+            }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
+        vm.getExchangeRates()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
