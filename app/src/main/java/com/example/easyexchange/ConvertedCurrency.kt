@@ -1,7 +1,9 @@
 package com.example.easyexchange
 
 data class ConvertedCurrency(
-    val chtmessage: String,
-    val engmessage: String,
-    val updatetime: String
+    var code: String,
+
+    var name: String,
+
+    var oneUSD_value: Double
 )
