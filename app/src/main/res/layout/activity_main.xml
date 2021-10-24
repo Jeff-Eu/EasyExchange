@@ -37,7 +37,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
-        android:id="@+id/spinner_selected_currency"
+        android:id="@+id/spinner_source_currency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="@id/guideline_right"
@@ -50,10 +50,10 @@
         app:layout_constraintLeft_toLeftOf="@id/guideline_left"
         app:layout_constraintRight_toRightOf="@id/guideline_right"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spinner_selected_currency">
+        app:layout_constraintTop_toBottomOf="@id/spinner_source_currency">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_converted"
+            android:id="@+id/recyclerview_exchange_rates"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />

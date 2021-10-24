@@ -23,7 +23,6 @@ private val CurrencyLayerRetrofit = Retrofit.Builder()
 interface ApiService {
 
     // Request the most recent exchange rate data
-//    @Headers("access_key: 7254d2810ad44d983b2ba441ffcb5147")
     @GET("live")
     suspend fun getLiveExchangeRate(
         @Query("currencies") currencies: String,

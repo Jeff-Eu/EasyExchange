@@ -23,32 +23,28 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         vm = ViewModelProvider(this).get(MainViewModel::class.java)
 
-        // SwipeRefreshLayout
+        /// SwipeRefreshLayout
         binding.swipeRefreshLayout.setOnRefreshListener {
             vm.onSwipeRefreshed()
         }
 
-        // RecyclerView
+        /// RecyclerView
         val adapter = GroupAdapter<GroupieViewHolder>()
-        binding.recyclerviewConverted.adapter = adapter
+        binding.recyclerviewExchangeRates.adapter = adapter
 
-        /* Test for UI only
-//        adapter.add(ExchangeRateItem("100 yen"))
-//        adapter.add(ExchangeRateItem("1782 dollar"))
-//        adapter.add(ExchangeRateItem("3021 pond"))
-//        adapter.add(ExchangeRateItem("70 dollar"))
-//        adapter.add(ExchangeRateItem("1782 dollar"))
-//        adapter.add(ExchangeRateItem("3021 pond"))
-//        adapter.add(ExchangeRateItem("70 dollar"))
-//        adapter.add(ExchangeRateItem("1782 dollar"))
-//        adapter.add(ExchangeRateItem("3021 pond"))
-//        adapter.add(ExchangeRateItem("70 dollar"))
-//        adapter.add(ExchangeRateItem("3021 pond"))
-//        adapter.add(ExchangeRateItem("70 dollar"))
-//        adapter.add(ExchangeRateItem("1782 dollar"))
-//        adapter.add(ExchangeRateItem("3021 pond"))
-//        adapter.add(ExchangeRateItem("70 dollar"))
-         */
+        /// Spinner
+        val sourceCurrencySpinner = binding.spinnerSourceCurrency
+        val targetCurrencies = SharedPreferencesHelper().selectedTargetCurrencies
+        // The spinner of source currencies uses the same list from target currencies.
+        ArrayAdapter(this, android.R.layout.simple_spinner_item, targetCurrencies.toList())
+            .also { spinnerAdapter ->
+                // Specify the layout to use when the list of choices appears
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                // Apply the adapter to the spinner
+                sourceCurrencySpinner.adapter = spinnerAdapter
+            }
+
+        /// Callback from ViewModel
         vm.exchangeRateDataList.observe(this) {
             adapter.update(it.map { v -> ExchangeRateItem(v.targetCurrency, v.exchangeRate) }
                 .toMutableList())
@@ -58,22 +54,14 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             if (it)
                 binding.swipeRefreshLayout.isRefreshing = false
         }
-
-        // Spinner
-        val spinner = binding.spinnerSelectedCurrency
-        val targetCurrencies = SharedPreferencesHelper().selectedTargetCurrencies
-        ArrayAdapter(this, android.R.layout.simple_spinner_item, targetCurrencies.toList())
-            .also { spinnerAdapter ->
-                // Specify the layout to use when the list of choices appears
-                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                // Apply the adapter to the spinner
-                spinner.adapter = spinnerAdapter
-            }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
+
+
+
         vm.getExchangeRates()
     }
 
