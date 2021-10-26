@@ -84,6 +84,10 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             if (it)
                 binding.swipeRefreshLayout.isRefreshing = false
         }
+
+        vm.timestamp.observe(this) {
+            binding.textviewTimestamp.text = it.toString()
+        }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

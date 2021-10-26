@@ -1,8 +1,10 @@
 package com.example.easyexchange
 
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import timber.log.Timber
 import java.io.EOFException
 
 /* Example of API response
@@ -51,10 +53,14 @@ data class LiveExchangeRateResponse(
             val jsonAdapter =
                 moshi.adapter(LiveExchangeRateResponse::class.java)
 
-            try {
-                return jsonAdapter.fromJson(json)
+            return try {
+                jsonAdapter.fromJson(json)
+            } catch (e: JsonDataException) {
+                Timber.d(e.message)
+                null
             } catch (e: EOFException) {
-                return null
+                Timber.d(e.message)
+                null
             }
         }
     }

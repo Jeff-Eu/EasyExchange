@@ -20,6 +20,11 @@ class MainViewModel : ViewModel() {
 
     val targetCurrencyList = listOf("AUD", "USD", "JPY", "EUR", "GBP", "TWD")
 
+    // Bonus: timestamp on the response of CurrencyLayer API
+    private val _timestamp: MutableLiveData<Long> = MutableLiveData(0)
+    val timestamp: LiveData<Long>
+        get() = _timestamp
+
     private val _exchangeRateDataList: MutableLiveData<List<ExchangeRateData>> = MutableLiveData()
     val exchangeRateDataList: LiveData<List<ExchangeRateData>>
         get() = _exchangeRateDataList
@@ -48,7 +53,9 @@ class MainViewModel : ViewModel() {
 
         val json = SharedPreferencesHelper().jsonOfCurrencyLayerResponse
         val liveExchangeRateResponse = LiveExchangeRateResponse.convertToObject(json)
-        _exchangeRateDataList.value = ConvertHelper.convertToExchangeRateDataList(liveExchangeRateResponse)
+        _timestamp.value = liveExchangeRateResponse?.timestamp ?: 0
+        _exchangeRateDataList.value =
+            ConvertHelper.convertToExchangeRateDataList(liveExchangeRateResponse)
     }
 
     private fun updatePropertiesByCallCurrencyLayerApi() {
@@ -72,6 +79,7 @@ class MainViewModel : ViewModel() {
                 SharedPreferencesHelper().jsonOfCurrencyLayerResponse =
                     LiveExchangeRateResponse.convertToJson(body)
 
+                _timestamp.value = body.timestamp
             } else
                 Timber.e(body.error?.toString())
 

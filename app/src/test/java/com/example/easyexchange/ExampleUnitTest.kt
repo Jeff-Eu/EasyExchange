@@ -11,13 +11,16 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun test_MutableSetToString() {
+        val set = mutableSetOf("12", "34")
+        assertEquals("12, 34", set.joinToString())
     }
 
     @Test
-    fun testMutableSetToString() {
-        val set = mutableSetOf("12", "34")
-        println(set.joinToString())
+    fun test_convertToObjectOnLiveExchangeRateResponse() {
+        var r = LiveExchangeRateResponse.convertToObject("")
+        assertEquals(r, null)
+        r = LiveExchangeRateResponse.convertToObject("{}")
+        assertNotNull(r)
     }
 }

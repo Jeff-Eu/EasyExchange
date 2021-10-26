@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">EasyExchange</string>
     <string name="please_input_currency_number">Please input currency number</string>
+    <!-- Bonus: show the timestamp on the last API response -->
+    <string name="timestamp">Timestamp:</string>
 </resources>

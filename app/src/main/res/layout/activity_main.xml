@@ -36,6 +36,29 @@
         app:layout_constraintRight_toRightOf="@id/guideline_right"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/textview_title_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="@string/timestamp"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/swipe_refresh_layout"
+        app:layout_constraintLeft_toLeftOf="@id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@id/editText_currency" />
+
+    <TextView android:id="@+id/textview_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:text="0"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/swipe_refresh_layout"
+        app:layout_constraintLeft_toRightOf="@id/textview_title_timestamp"
+        app:layout_constraintTop_toBottomOf="@id/editText_currency"
+        tools:ignore="HardcodedText" />
+
     <Spinner
         android:id="@+id/spinner_source_currency"
         android:layout_width="wrap_content"
