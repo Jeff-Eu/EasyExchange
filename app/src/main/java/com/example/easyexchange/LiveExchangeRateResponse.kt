@@ -1,5 +1,10 @@
 package com.example.easyexchange
 
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import java.io.EOFException
+
 /* Example of API response
 
 {
@@ -30,7 +35,28 @@ data class LiveExchangeRateResponse(
 ) {
     companion object {
 
+        fun convertToJson(liveExchangeRateResponse: LiveExchangeRateResponse): String {
 
+            val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
+
+            val jsonAdapter: JsonAdapter<LiveExchangeRateResponse> =
+                moshi.adapter(LiveExchangeRateResponse::class.java)
+
+            return jsonAdapter.toJson(liveExchangeRateResponse)
+        }
+
+        fun convertToObject(json: String): LiveExchangeRateResponse? {
+
+            val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
+            val jsonAdapter =
+                moshi.adapter(LiveExchangeRateResponse::class.java)
+
+            try {
+                return jsonAdapter.fromJson(json)
+            } catch (e: EOFException) {
+                return null
+            }
+        }
     }
 
 }

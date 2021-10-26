@@ -33,46 +33,6 @@ open class SharedPreferencesHelper {
 
     private object SharedPreferenceDelegates {
 
-        fun intProperty(defaultValue: Int = 1) =
-            object : ReadWriteProperty<SharedPreferencesHelper, Int> {
-                override fun getValue(
-                    thisRef: SharedPreferencesHelper,
-                    property: KProperty<*>
-                ): Int {
-                    return thisRef.sharedPreferences.getInt(property.name, defaultValue)
-                }
-
-                override fun setValue(
-                    thisRef: SharedPreferencesHelper,
-                    property: KProperty<*>,
-                    value: Int
-                ) {
-                    thisRef.sharedPreferences.edit()
-                        .putInt(property.name, value)
-                        .apply()
-                }
-            }
-
-        fun booleanProperty(defaultValue: Boolean = true) =
-            object : ReadWriteProperty<SharedPreferencesHelper, Boolean> {
-                override fun getValue(
-                    thisRef: SharedPreferencesHelper,
-                    property: KProperty<*>
-                ): Boolean {
-                    return thisRef.sharedPreferences.getBoolean(property.name, defaultValue)
-                }
-
-                override fun setValue(
-                    thisRef: SharedPreferencesHelper,
-                    property: KProperty<*>,
-                    value: Boolean
-                ) {
-                    thisRef.sharedPreferences.edit()
-                        .putBoolean(property.name, value)
-                        .apply()
-                }
-            }
-
         fun stringProperty(defaultValue: String = "") =
             object : ReadWriteProperty<SharedPreferencesHelper, String> {
                 override fun getValue(

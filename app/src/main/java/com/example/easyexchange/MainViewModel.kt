@@ -8,12 +8,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import timber.log.Timber
-import com.squareup.moshi.JsonAdapter
-
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import java.io.EOFException
-import java.lang.Exception
 
 class MainViewModel : ViewModel() {
 
@@ -53,21 +47,8 @@ class MainViewModel : ViewModel() {
     private fun updatePropertiesFromPersistentData() {
 
         val json = SharedPreferencesHelper().jsonOfCurrencyLayerResponse
-        val liveExchangeRateResponse = convertToObject(json)
-        _exchangeRateDataList.value = convertToExchangeRateDataList(liveExchangeRateResponse)
-    }
-
-    private fun convertToExchangeRateDataList(data: LiveExchangeRateResponse?): List<ExchangeRateData>? {
-
-        data ?: return null
-
-        val output = data.quotes.map { entry ->
-            ExchangeRateData(
-                entry.value,
-                entry.key.substring(3)
-            )
-        }
-        return output
+        val liveExchangeRateResponse = LiveExchangeRateResponse.convertToObject(json)
+        _exchangeRateDataList.value = ConvertHelper.convertToExchangeRateDataList(liveExchangeRateResponse)
     }
 
     private fun updatePropertiesByCallCurrencyLayerApi() {
@@ -85,10 +66,11 @@ class MainViewModel : ViewModel() {
                 for (pair in exchangeMap)
                     Timber.i("${pair.key}, ${pair.value}")
 
-                _exchangeRateDataList.value = convertToExchangeRateDataList(body)
+                _exchangeRateDataList.value = ConvertHelper.convertToExchangeRateDataList(body)
 
                 // Convert API response to Json string and save it to SharedPreference
-                SharedPreferencesHelper().jsonOfCurrencyLayerResponse = convertToJson(body)
+                SharedPreferencesHelper().jsonOfCurrencyLayerResponse =
+                    LiveExchangeRateResponse.convertToJson(body)
 
             } else
                 Timber.e(body.error?.toString())
@@ -110,47 +92,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun convertToJson(liveExchangeRateResponse: LiveExchangeRateResponse): String {
-
-        val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
-
-        val jsonAdapter: JsonAdapter<LiveExchangeRateResponse> =
-            moshi.adapter(LiveExchangeRateResponse::class.java)
-
-        return jsonAdapter.toJson(liveExchangeRateResponse)
-    }
-
-    fun convertToObject(json: String): LiveExchangeRateResponse? {
-
-        val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
-        val jsonAdapter =
-            moshi.adapter(LiveExchangeRateResponse::class.java)
-
-        try {
-            return jsonAdapter.fromJson(json)
-        } catch (e: EOFException) {
-            return null
-        }
-    }
-
     fun onSwipeRefreshed() {
         updatePropertiesByCallCurrencyLayerApi()
     }
-
 
     fun findExchangeRateOfUSD(selectedSourceCurrency: String): Double? {
         return _exchangeRateDataList.value?.find { v ->
             v.targetCurrency == selectedSourceCurrency
         }?.exchangeRateOfUSD
     }
-
-    private fun calculateViewOfExchangeRateForAllCurrencies(selectedSourceCurrency: String) {
-
-        val selectedSourceCurrencyRatio =
-            _exchangeRateDataList.value?.find { v -> v.targetCurrency == selectedSourceCurrency }?.exchangeRateOfUSD
-
-        if (selectedSourceCurrencyRatio != null)
-            _exchangeRateDataList.value?.forEach { v -> v.exchangeRateOfUSD /= selectedSourceCurrencyRatio }
-    }
-
 }
