@@ -1,9 +1,14 @@
-package com.example.easyexchange
+package com.example.easyexchange.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.easyexchange.Api
+import com.example.easyexchange.helper.ConvertHelper
+import com.example.easyexchange.helper.SharedPreferencesHelper
+import com.example.easyexchange.model.ExchangeRateData
+import com.example.easyexchange.model.LiveExchangeRateResponse
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.Exception

@@ -1,5 +1,6 @@
 package com.example.easyexchange
 
+import com.example.easyexchange.model.LiveExchangeRateResponse
 import org.junit.Test
 
 import org.junit.Assert.*

@@ -1,6 +1,7 @@
-package com.example.easyexchange
+package com.example.easyexchange.view
 
 import android.view.View
+import com.example.easyexchange.R
 import com.example.easyexchange.databinding.ConvertedCurrencyItemBinding
 import com.xwray.groupie.viewbinding.BindableItem
 

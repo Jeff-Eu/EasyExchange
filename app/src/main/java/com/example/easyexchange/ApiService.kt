@@ -1,5 +1,6 @@
 package com.example.easyexchange
 
+import com.example.easyexchange.model.LiveExchangeRateResponse
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

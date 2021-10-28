@@ -1,8 +1,8 @@
-package com.example.easyexchange
+package com.example.easyexchange.helper
 
-import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.easyexchange.EasyExchangeApplication
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

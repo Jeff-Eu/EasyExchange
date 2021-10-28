@@ -1,4 +1,7 @@
-package com.example.easyexchange
+package com.example.easyexchange.helper
+
+import com.example.easyexchange.model.ExchangeRateData
+import com.example.easyexchange.model.LiveExchangeRateResponse
 
 class ConvertHelper {
 

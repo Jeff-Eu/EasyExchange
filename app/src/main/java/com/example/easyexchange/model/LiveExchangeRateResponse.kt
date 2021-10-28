@@ -1,4 +1,4 @@
-package com.example.easyexchange
+package com.example.easyexchange.model
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException

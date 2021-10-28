@@ -1,4 +1,4 @@
-package com.example.easyexchange
+package com.example.easyexchange.model
 
 
 data class ExchangeRateData(
