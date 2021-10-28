@@ -68,16 +68,19 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         /// View observes changes from ViewModel's LiveData
         vm.exchangeRateDataList.observe(this) {
-            if(it == null) return@observe
+            if (it == null) return@observe
 
             adapter.update(it.map { v ->
 
                 val sourceCurrencyValue = binding.editTextCurrency.text.toString().toDoubleOrNull()
                 val targetCurrencyValue =
-                    v.getTargetCurrencyValueText(sourceCurrencyValue, vm.findExchangeRateOfUSD(vm.sourceCurrency)!!)
+                    v.getTargetCurrencyValueText(
+                        sourceCurrencyValue,
+                        vm.findExchangeRateOfUSD(vm.sourceCurrency)!!
+                    )
 
                 ExchangeItem(v.targetCurrency, targetCurrencyValue)
-            }.toMutableList())
+            })
         }
 
         vm.exchangeRateRetrieved.observe(this) {

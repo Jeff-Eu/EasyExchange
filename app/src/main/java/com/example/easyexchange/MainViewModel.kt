@@ -4,10 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.*
 import timber.log.Timber
+import java.lang.Exception
 
 class MainViewModel : ViewModel() {
 
@@ -29,9 +28,9 @@ class MainViewModel : ViewModel() {
     val exchangeRateDataList: LiveData<List<ExchangeRateData>>
         get() = _exchangeRateDataList
 
-    private val _exchangeRateApiRetrieved = MutableLiveData(false)
+    private val _exchangeRateApiCalled = MutableLiveData(false)
     val exchangeRateRetrieved: LiveData<Boolean>
-        get() = _exchangeRateApiRetrieved
+        get() = _exchangeRateApiCalled
 
     init {
 
@@ -62,9 +61,15 @@ class MainViewModel : ViewModel() {
         val job = viewModelScope.launch {
 
             val body: LiveExchangeRateResponse
-            withTimeout(3000) {
-                body =
-                    Api.currencyLayerRetrofitService.getLiveExchangeRates(targetCurrencyList.joinToString())
+            try {
+                withTimeout(3000) {
+                    body =
+                        Api.currencyLayerRetrofitService.getLiveExchangeRates(targetCurrencyList.joinToString())
+                }
+            } catch (e: Exception) {
+                Timber.d("Cause: ${e.cause}, Message: ${e.message}")
+                _exchangeRateApiCalled.value = true
+                return@launch
             }
 
             if (body.success) {
@@ -83,7 +88,7 @@ class MainViewModel : ViewModel() {
             } else
                 Timber.e(body.error?.toString())
 
-            _exchangeRateApiRetrieved.value = true
+            _exchangeRateApiCalled.value = true
         }
 
         job.invokeOnCompletion {
@@ -91,11 +96,11 @@ class MainViewModel : ViewModel() {
             it?.message?.let { msg ->
 
                 if (it is CancellationException)
-                    Timber.d("$job was cancelled. Reason: $msg")
+                    Timber.d("$job was cancelled. Cause: ${it.cause}, Message: $msg")
                 else
-                    Timber.e("$job throws an error. Reason: $msg")
+                    Timber.e("$job throws an error. Cause: ${it.cause}, Message: $msg")
 
-                _exchangeRateApiRetrieved.value = true
+                _exchangeRateApiCalled.value = true
             }
         }
     }
