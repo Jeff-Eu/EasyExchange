@@ -10,6 +10,11 @@ import java.lang.Exception
 
 class MainViewModel : ViewModel() {
 
+    companion object {
+
+        const val millisecondsOf30minutes = 30 * 60 * 1000
+    }
+
     var sourceCurrency: String = SharedPreferencesHelper().sourceCurrency
         set(value) {
             field = value
@@ -18,6 +23,9 @@ class MainViewModel : ViewModel() {
         }
 
     val targetCurrencyList = listOf("AUD", "USD", "JPY", "EUR", "GBP", "TWD")
+
+    private var systemTimeOfPrevCallOnCurrencyLayerAPI =
+        SharedPreferencesHelper().systemTimeOfPrevCallOnCurrencyLayerAPI
 
     // Bonus: timestamp on the response of CurrencyLayer API
     private val _timestamp: MutableLiveData<Long> = MutableLiveData(0)
@@ -63,6 +71,13 @@ class MainViewModel : ViewModel() {
             val body: LiveExchangeRateResponse
             try {
                 withTimeout(3000) {
+                    val presentTime = System.currentTimeMillis()
+                    if (presentTime - systemTimeOfPrevCallOnCurrencyLayerAPI < millisecondsOf30minutes)
+                        throw CancellationException("We restrict the CurrencyLayer API can only be called once per 30 minutes.")
+
+                    SharedPreferencesHelper().systemTimeOfPrevCallOnCurrencyLayerAPI = presentTime
+                    systemTimeOfPrevCallOnCurrencyLayerAPI = presentTime
+
                     body =
                         Api.currencyLayerRetrofitService.getLiveExchangeRates(targetCurrencyList.joinToString())
                 }

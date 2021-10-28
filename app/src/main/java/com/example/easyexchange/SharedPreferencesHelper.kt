@@ -31,6 +31,9 @@ open class SharedPreferencesHelper {
     // Selected source Currency
     var sourceCurrency by SharedPreferenceDelegates.stringProperty("USD")
 
+    // Stores the system time of previous call on CurrencyLayer API
+    var systemTimeOfPrevCallOnCurrencyLayerAPI by SharedPreferenceDelegates.longProperty()
+
     private object SharedPreferenceDelegates {
 
         fun stringProperty(defaultValue: String = "") =
@@ -49,6 +52,26 @@ open class SharedPreferencesHelper {
                 ) {
                     thisRef.sharedPreferences.edit()
                         .putString(property.name, value)
+                        .apply()
+                }
+            }
+
+        fun longProperty(defaultValue: Long = 1) =
+            object : ReadWriteProperty<SharedPreferencesHelper, Long> {
+                override fun getValue(
+                    thisRef: SharedPreferencesHelper,
+                    property: KProperty<*>
+                ): Long {
+                    return thisRef.sharedPreferences.getLong(property.name, defaultValue)
+                }
+
+                override fun setValue(
+                    thisRef: SharedPreferencesHelper,
+                    property: KProperty<*>,
+                    value: Long
+                ) {
+                    thisRef.sharedPreferences.edit()
+                        .putLong(property.name, value)
                         .apply()
                 }
             }
