@@ -66,9 +66,12 @@ class MainViewModel : ViewModel() {
 
         val json = SharedPreferencesHelper().jsonOfCurrencyLayerResponse
         val liveExchangeRateResponse = LiveExchangeRateResponse.convertToObject(json)
-        _timestamp.value = liveExchangeRateResponse?.timestamp ?: 0
-        _exchangeRateDataList.value =
-            ConvertHelper.convertToExchangeRateDataList(liveExchangeRateResponse)
+        _timestamp.postValue(liveExchangeRateResponse?.timestamp ?: 0)
+        _exchangeRateDataList.postValue(
+            ConvertHelper.convertToExchangeRateDataList(
+                liveExchangeRateResponse
+            )
+        )
     }
 
     /**
@@ -78,11 +81,13 @@ class MainViewModel : ViewModel() {
     suspend fun callCurrencyLayerApiAndUpdateTimestamp(limitedTimeInterval: Long): LiveExchangeRateResponse? {
         val presentTime = System.currentTimeMillis()
         if (presentTime - systemTimeOfPrevCallOnCurrencyLayerAPI < limitedTimeInterval) {
-            Toast.makeText(
-                EasyExchangeApplication.instance,
-                "API wasn't called. We restrict the CurrencyLayer API can only be called once per ${limitedTimeInterval / 1000 / 60} minutes.",
-                Toast.LENGTH_LONG
-            ).show()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    EasyExchangeApplication.instance,
+                    "API wasn't called. We restrict the CurrencyLayer API can only be called once per ${limitedTimeInterval / 1000 / 60} minutes.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
             return null
         }
 
@@ -101,7 +106,7 @@ class MainViewModel : ViewModel() {
                 body = callCurrencyLayerApiAndUpdateTimestamp(MILLISECONDS_OF_HALF_HOUR)
             }
             if (body == null) {
-                _exchangeRateApiCalled.value = true
+                _exchangeRateApiCalled.postValue(true)
                 return@launch
             }
 
@@ -111,17 +116,17 @@ class MainViewModel : ViewModel() {
                 for (pair in exchangeMap)
                     Timber.i("${pair.key}, ${pair.value}")
 
-                _exchangeRateDataList.value = ConvertHelper.convertToExchangeRateDataList(body)
+                _exchangeRateDataList.postValue(ConvertHelper.convertToExchangeRateDataList(body))
 
                 // Convert API response to Json string and save it to SharedPreference
                 SharedPreferencesHelper().jsonOfCurrencyLayerResponse =
                     LiveExchangeRateResponse.convertToJson(body)
 
-                _timestamp.value = body.timestamp
+                _timestamp.postValue(body.timestamp)
             } else
                 Timber.e(body.error?.toString())
 
-            _exchangeRateApiCalled.value = true
+            _exchangeRateApiCalled.postValue(true)
         }
 
         job.invokeOnCompletion {
@@ -133,7 +138,7 @@ class MainViewModel : ViewModel() {
                 else
                     Timber.e("$job throws an error. Cause: ${it.cause}, Message: $msg")
 
-                _exchangeRateApiCalled.value = true
+                _exchangeRateApiCalled.postValue(true)
             }
         }
     }

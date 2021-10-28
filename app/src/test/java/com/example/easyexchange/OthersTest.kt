@@ -10,15 +10,15 @@ import org.junit.Assert.*
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class ExampleUnitTest {
+class OthersTest {
     @Test
-    fun test_MutableSetToString() {
+    fun `mutableSet to String`() {
         val set = mutableSetOf("12", "34")
         assertEquals("12, 34", set.joinToString())
     }
 
     @Test
-    fun test_convertToObjectOnLiveExchangeRateResponse() {
+    fun `convertToObject() on LiveExchangeRateResponse`() {
         var r = LiveExchangeRateResponse.convertToObject("")
         assertEquals(r, null)
         r = LiveExchangeRateResponse.convertToObject("{}")
