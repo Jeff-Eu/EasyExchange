@@ -6,7 +6,7 @@ import com.example.easyexchange.EasyExchangeApplication
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-open class SharedPreferencesHelper {
+open class SharedPreferencesHelper(context: Context) {
 
     companion object {
 

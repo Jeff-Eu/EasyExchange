@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
 import com.example.easyexchange.databinding.ActivityMainBinding
 import com.example.easyexchange.viewmodel.MainViewModel
+import com.example.easyexchange.viewmodel.MainViewModelFactory
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 
@@ -40,11 +41,12 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        vm = ViewModelProvider(this).get(MainViewModel::class.java)
+        val viewModelFactory = MainViewModelFactory(this)
+        vm = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
         /// SwipeRefreshLayout
         binding.swipeRefreshLayout.setOnRefreshListener {
-            vm.onSwipeRefreshed()
+            vm.onSwipeRefreshed(this)
         }
 
         /// RecyclerView
@@ -95,7 +97,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        vm.sourceCurrency = parent?.getItemAtPosition(position) as String
+        vm.setSourceCurrency(this, parent?.getItemAtPosition(position) as String)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
