@@ -1,23 +1,24 @@
 package com.example.easyexchange.viewmodel
 
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easyexchange.Api
+import com.example.easyexchange.EasyExchangeApplication
 import com.example.easyexchange.helper.ConvertHelper
 import com.example.easyexchange.helper.SharedPreferencesHelper
 import com.example.easyexchange.model.ExchangeRateData
 import com.example.easyexchange.model.LiveExchangeRateResponse
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.lang.Exception
 
 class MainViewModel : ViewModel() {
 
     companion object {
 
-        const val millisecondsOf30minutes = 30 * 60 * 1000
+        const val MILLISECONDS_OF_HALF_HOUR = 30 * 60 * 1000L
     }
 
     var sourceCurrency: String = SharedPreferencesHelper().sourceCurrency
@@ -70,24 +71,36 @@ class MainViewModel : ViewModel() {
             ConvertHelper.convertToExchangeRateDataList(liveExchangeRateResponse)
     }
 
+    /**
+     * Call the CurrencyLayer API at most once per time interval, [limitedTimeInterval], which is measured
+     * in milliseconds. And update the saved timestamp info.
+     */
+    suspend fun callCurrencyLayerApiAndUpdateTimestamp(limitedTimeInterval: Long): LiveExchangeRateResponse? {
+        val presentTime = System.currentTimeMillis()
+        if (presentTime - systemTimeOfPrevCallOnCurrencyLayerAPI < limitedTimeInterval) {
+            Toast.makeText(
+                EasyExchangeApplication.instance,
+                "API wasn't called. We restrict the CurrencyLayer API can only be called once per ${limitedTimeInterval / 1000 / 60} minutes.",
+                Toast.LENGTH_LONG
+            ).show()
+            return null
+        }
+
+        /// update timestamp info
+        SharedPreferencesHelper().systemTimeOfPrevCallOnCurrencyLayerAPI = presentTime
+        systemTimeOfPrevCallOnCurrencyLayerAPI = presentTime
+
+        return Api.currencyLayerRetrofitService.getLiveExchangeRates(targetCurrencyList.joinToString())
+    }
+
     private fun updatePropertiesByCallCurrencyLayerApi() {
         val job = viewModelScope.launch {
 
-            val body: LiveExchangeRateResponse
-            try {
-                withTimeout(3000) {
-                    val presentTime = System.currentTimeMillis()
-                    if (presentTime - systemTimeOfPrevCallOnCurrencyLayerAPI < millisecondsOf30minutes)
-                        throw CancellationException("We restrict the CurrencyLayer API can only be called once per 30 minutes.")
-
-                    SharedPreferencesHelper().systemTimeOfPrevCallOnCurrencyLayerAPI = presentTime
-                    systemTimeOfPrevCallOnCurrencyLayerAPI = presentTime
-
-                    body =
-                        Api.currencyLayerRetrofitService.getLiveExchangeRates(targetCurrencyList.joinToString())
-                }
-            } catch (e: Exception) {
-                Timber.d("Cause: ${e.cause}, Message: ${e.message}")
+            val body: LiveExchangeRateResponse?
+            withTimeout(3000) {
+                body = callCurrencyLayerApiAndUpdateTimestamp(MILLISECONDS_OF_HALF_HOUR)
+            }
+            if (body == null) {
                 _exchangeRateApiCalled.value = true
                 return@launch
             }
