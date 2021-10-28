@@ -1,4 +1,4 @@
-package com.example.easyexchange
+package com.example.easyexchange.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,7 +9,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
 import com.example.easyexchange.databinding.ActivityMainBinding
-import com.example.easyexchange.view.ExchangeItem
 import com.example.easyexchange.viewmodel.MainViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
