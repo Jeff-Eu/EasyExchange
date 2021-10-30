@@ -105,7 +105,9 @@ class MainViewModel(context: Context) : ViewModel() {
         systemTimeOfPrevCallOnCurrencyLayerAPI = presentTime
 
         return try {
-            Api.currencyLayerRetrofitService.getLiveExchangeRates(targetCurrencyList.joinToString())
+            withTimeout(3000) {
+                Api.currencyLayerRetrofitService.getLiveExchangeRates(targetCurrencyList.joinToString())
+            }
         } catch (e: Exception) {
             Timber.d("Cause: ${e.cause}, Message: ${e.message}")
             null
@@ -115,10 +117,7 @@ class MainViewModel(context: Context) : ViewModel() {
     private fun updatePropertiesByCallCurrencyLayerApi(context: Context) {
         val job = viewModelScope.launch {
 
-            val body: LiveExchangeRateResponse?
-            withTimeout(3000) {
-                body = callCurrencyLayerApiAndUpdateTimestamp(context, MILLISECONDS_OF_HALF_HOUR)
-            }
+            val body = callCurrencyLayerApiAndUpdateTimestamp(context, MILLISECONDS_OF_HALF_HOUR)
             if (body == null) {
                 _exchangeRateApiCalled.postValue(true)
                 return@launch

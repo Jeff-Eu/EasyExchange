@@ -14,8 +14,6 @@ open class SharedPreferencesHelper(context: Context) {
             "{\"success\":true,\"timestamp\":1635235804,\"source\":\"USD\",\"quotes\":{\"USDAUD\":1.333801,\"USDUSD\":1.0,\"USDJPY\":113.997502,\"USDEUR\":0.861809,\"USDGBP\":0.726185,\"USDTWD\":27.824498}}"
     }
 
-    private val context = EasyExchangeApplication.instance
-
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(
             "EasyExchange",
