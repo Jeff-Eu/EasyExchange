@@ -86,13 +86,13 @@ class MainViewModel(context: Context) : ViewModel() {
      */
     suspend fun callCurrencyLayerApiAndUpdateTimestamp(
         context: Context,
-        limitedTimeInterval: Long
+        limitedTimeInterval: Long,
     ): LiveExchangeRateResponse? {
         val presentTime = System.currentTimeMillis()
         if (presentTime - systemTimeOfPrevCallOnCurrencyLayerAPI < limitedTimeInterval) {
             withContext(Dispatchers.Main) {
                 Toast.makeText(
-                    EasyExchangeApplication.instance,
+                    context,
                     "API wasn't called. We restrict the CurrencyLayer API can only be called once per ${limitedTimeInterval / 1000 / 60} minutes.",
                     Toast.LENGTH_LONG
                 ).show()

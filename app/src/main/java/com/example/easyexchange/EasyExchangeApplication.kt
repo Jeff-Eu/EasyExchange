@@ -6,15 +6,15 @@ import timber.log.Timber.DebugTree
 
 class EasyExchangeApplication : Application() {
 
-    companion object {
-        lateinit var instance: EasyExchangeApplication
-            private set
-    }
+//    companion object {
+//        lateinit var instance: EasyExchangeApplication
+//            private set
+//    }
 
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) Timber.plant(DebugTree())
-        instance = this
+//        instance = this
     }
 
 }

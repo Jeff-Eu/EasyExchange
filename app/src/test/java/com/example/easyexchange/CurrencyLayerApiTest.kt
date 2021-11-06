@@ -18,8 +18,8 @@ class CurrencyLayerApiTest {
 
             // Test: for successful case
             if (body.success) {
-                assertTrue(body.source == "USD")
-                assertTrue(body.quotes.size == 6)
+                assertEquals("USD", body.source)
+                assertEquals(6, body.quotes.size)
             }
 
             // Test: Check the error return in case of continuous calls in a short time
@@ -27,7 +27,7 @@ class CurrencyLayerApiTest {
                 body =
                     Api.currencyLayerRetrofitService.getLiveExchangeRates(targetCurrencyList.joinToString())
                 if (!body.success)
-                    assertTrue(body.error != null)
+                    assertNotNull(body.error)
             }
         }
     }
