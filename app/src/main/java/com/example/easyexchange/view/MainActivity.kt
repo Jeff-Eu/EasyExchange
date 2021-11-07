@@ -16,8 +16,6 @@ import com.xwray.groupie.GroupieViewHolder
 
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
-    // todo: How could I replace var with val ?
-    private lateinit var binding: ActivityMainBinding
     private lateinit var vm: MainViewModel
 
     private val currencyTextWatcher = object : TextWatcher {
@@ -38,7 +36,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val viewModelFactory = MainViewModelFactory(this)
